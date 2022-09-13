@@ -12,16 +12,23 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const TwitterStrategy = require("passport-twitter").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 
+interface USER_SERIALIZATION_RESPONSE {
+  message: String;
+  data: any;
+}
+
+// SG 09/13/2022 14:05 this function checks if the authenticated user exists in db
 const serializeUser = async (
   email: string,
   authProvider: string,
   providerId: string,
   username: string
-) => {
+): Promise<USER_SERIALIZATION_RESPONSE | Error> => {
   return new Promise((resolve, reject) => {
     User.findOne({ providerId: providerId }, async (err: Error, doc: IUser) => {
       if (err) reject(err);
       if (!doc) {
+        // insert this user into database
         User.create(
           {
             authProvider: authProvider,
@@ -48,11 +55,6 @@ const serializeUser = async (
   });
 };
 
-interface DB_RESPONSE_RESGISTER_CHECK {
-  message: String;
-  data: any;
-}
-
 passport.use(
   new GoogleStrategy(
     {
@@ -72,7 +74,7 @@ passport.use(
         profile.id,
         profile.displayName
       )
-        .then((res: DB_RESPONSE_RESGISTER_CHECK) => {
+        .then((res: USER_SERIALIZATION_RESPONSE) => {
           console.log(res);
           cb(null, profile);
         })
@@ -105,7 +107,7 @@ passport.use(
         profile.id,
         profile.displayName
       )
-        .then((res: DB_RESPONSE_RESGISTER_CHECK) => {
+        .then((res: USER_SERIALIZATION_RESPONSE) => {
           console.log(res);
           cb(null, profile);
         })
@@ -137,7 +139,7 @@ passport.use(
         profile.id,
         profile.displayName
       )
-        .then((res: DB_RESPONSE_RESGISTER_CHECK) => {
+        .then((res: USER_SERIALIZATION_RESPONSE) => {
           console.log(res);
           cb(null, profile);
         })
