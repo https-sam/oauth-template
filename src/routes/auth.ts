@@ -32,7 +32,7 @@ const registerUser = async (
           async (err: Error, doc: any) => {
             if (err) reject(err);
             resolve({
-              message: "user created",
+              message: "registered",
               data: doc,
             });
           }
@@ -40,7 +40,7 @@ const registerUser = async (
       } else {
         // SG 09/13/2022 12:57  user exists
         resolve({
-          message: "user exists",
+          message: "logged in",
           data: doc,
         });
       }
@@ -78,7 +78,8 @@ passport.use(
         })
         .catch((e) => {
           console.log(e);
-          cb(e, null);
+          // TODO: return a error page here
+          cb(`404 ERROR OCCURED\n ${e.message}`, null);
         });
     }
   )
@@ -89,6 +90,7 @@ passport.use(
     {
       consumerKey: process.env.TWITTER_CONSUMER_KEY,
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      includeEmail: true,
       callbackURL: `${process.env.BACKEND_URL}/auth/twitter/callback`,
     },
     function (
@@ -97,13 +99,21 @@ passport.use(
       profile: any,
       cb: (arg0: any, arg1: any) => void
     ) {
-      // authemtication successfull
-      // insert user into db
-      // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      //   return cb(err, user);
-      // });
-      console.log(profile);
-      cb(null, profile);
+      registerUser(
+        profile.emails[0].value,
+        "twitter",
+        profile.id,
+        profile.displayName
+      )
+        .then((res: DB_RESPONSE_RESGISTER_CHECK) => {
+          console.log(res);
+          cb(null, profile);
+        })
+        .catch((e) => {
+          console.log(e);
+          // TODO: return a error page here
+          cb(`404 ERROR OCCURED\n ${e.message}`, null);
+        });
     }
   )
 );
@@ -121,13 +131,21 @@ passport.use(
       profile: any,
       cb: (arg0: any, arg1: any) => void
     ) {
-      // authemtication successfull
-      // insert user into db
-      // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      //   return cb(err, user);
-      // });
-      console.log(profile);
-      cb(null, profile);
+      registerUser(
+        profile.emails[0].value,
+        "github",
+        profile.id,
+        profile.displayName
+      )
+        .then((res: DB_RESPONSE_RESGISTER_CHECK) => {
+          console.log(res);
+          cb(null, profile);
+        })
+        .catch((e) => {
+          console.log(e);
+          // TODO: return a error page here
+          cb(`404 ERROR OCCURED\n ${e.message}`, null);
+        });
     }
   )
 );
