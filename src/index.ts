@@ -15,7 +15,6 @@ mongoose.connect(process.env.MONGOOSE_URI as string, {}, () => {
   console.log("Connected to mongo db");
 });
 
-//middle ware
 app.use(express.json());
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 app.use(
