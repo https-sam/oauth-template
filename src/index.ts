@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
   res.send("Root dir: success");
 });
 
+// returns the logged in user's informaton obtained from the provider
 app.get("/get_user", (req, res) => {
   res.send(req.user);
 });
