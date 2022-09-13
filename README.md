@@ -1,7 +1,7 @@
 # oauth-template-jwt
 
 An authentication backend server template 
-- JWS
+- JWS (JSON WEB TOKEN)
 - Twitter
 - Github
 - Google
