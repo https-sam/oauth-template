@@ -12,7 +12,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const TwitterStrategy = require("passport-twitter").Strategy;
 const GitHubStrategy = require("passport-github2").Strategy;
 
-const serializeUSer = async (
+const serializeUser = async (
   email: string,
   authProvider: string,
   providerId: string,
@@ -66,7 +66,7 @@ passport.use(
       profile: any,
       cb: (arg0: any, arg1: any) => void
     ) {
-      serializeUSer(
+      serializeUser(
         profile.emails[0].value,
         "google",
         profile.id,
@@ -99,7 +99,7 @@ passport.use(
       profile: any,
       cb: (arg0: any, arg1: any) => void
     ) {
-      serializeUSer(
+      serializeUser(
         profile.emails[0].value,
         "twitter",
         profile.id,
@@ -131,7 +131,7 @@ passport.use(
       profile: any,
       cb: (arg0: any, arg1: any) => void
     ) {
-      serializeUSer(
+      serializeUser(
         profile.emails[0].value,
         "github",
         profile.id,
