@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { getTokenSourceMapRange } from "typescript";
 
 const user = new mongoose.Schema({
   // twitterId: {
