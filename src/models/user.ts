@@ -1,21 +1,17 @@
 import mongoose from "mongoose";
 
-const user = new mongoose.Schema({
-  // twitterId: {
-  //   required: false,
-  //   type: String,
-  // },
-  // githubId: {
-  //   required: false,
-  //   type: String,
-  // },
-  // googleId: {
-  //   required: false,
-  //   type: String,
-  // },
+const { Schema } = mongoose;
 
-  // SG 09/13/2022 08:50 login provider
+const userSchema = new Schema({
   authProvider: {
+    required: true,
+    type: String,
+  },
+  providerId: {
+    required: true,
+    type: String,
+  },
+  email: {
     required: true,
     type: String,
   },
@@ -25,4 +21,4 @@ const user = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("user", user);
+export default mongoose.model("User", userSchema);

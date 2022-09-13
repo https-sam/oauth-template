@@ -1,6 +1,6 @@
 export interface IUser {
-  twitterId?: string;
-  githubId?: string;
-  googleId?: string;
+  authProvider: string;
+  providerId: string;
+  email: string;
   username: string;
 }
