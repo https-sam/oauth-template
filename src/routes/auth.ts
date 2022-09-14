@@ -14,7 +14,7 @@ const GitHubStrategy = require("passport-github2").Strategy;
 
 interface USER_SERIALIZATION_RESPONSE {
   message: String;
-  data: any;
+  data: IUser;
 }
 
 // SG 09/13/2022 14:05 this function checks if the authenticated user exists in db
@@ -60,7 +60,7 @@ const serializeUser = (
                 data: doc,
               });
             }
-
+            // SG 09/13/2022 18:46  return updated data
             resolve({
               message: "logged in",
               data: updatedDoc,
@@ -90,7 +90,7 @@ passport.use(
         "google",
         profile.id,
         profile.displayName,
-        `${profile.name.familyName} ${profile.name.givenName}`,
+        `${profile.name.givenName} ${profile.name.familyName}`,
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
@@ -226,5 +226,13 @@ router.get(
     res.redirect(process.env.FRONTEND_URL);
   }
 );
+
+router.post("/logout", (req, res) => {
+  console.log(req.user);
+  if (req.user) {
+    req.logout(null);
+    res.send("success");
+  }
+});
 
 export default router;

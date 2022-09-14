@@ -11,9 +11,15 @@ const PORT = process.env.PORT || 8080;
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGO_URI as string).then(() => {
-  console.log("Connected to mongo db");
-});
+mongoose
+  .connect(
+    process.env.MONGO_URI as string,
+    { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions
+  )
+  .then(() => {
+    console.log("Connected to mongo db");
+  });
+
 // { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
 
 app.use(express.json());
@@ -39,6 +45,15 @@ app.get("/get_user", (req, res) => {
   res.send(req.user);
 });
 
+// SG 09/14/2022 14:37 logs the user out of session
+app.get("/logout", (req, res) => {
+  if (req.user) {
+    req.logout((err) => {
+      if (err) res.send("failed");
+      res.send("success");
+    });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server initialized on ${PORT}`);
 });
