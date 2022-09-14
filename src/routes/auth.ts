@@ -77,7 +77,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${process.env.BACKEND_URL}/auth/google/callback`,
+      callbackURL: "/auth/google/callback",
     },
     async function (
       accessToken: any,
@@ -111,7 +111,7 @@ passport.use(
       consumerKey: process.env.TWITTER_CONSUMER_KEY,
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
       includeEmail: true,
-      callbackURL: `${process.env.BACKEND_URL}/auth/twitter/callback`,
+      callbackURL: "/auth/twitter/callback",
     },
     function (
       accessToken: any,
@@ -144,7 +144,7 @@ passport.use(
     {
       clientID: process.env.GITHUB_CLIENT_ID,
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: `${process.env.BACKEND_URL}/auth/github/callback`,
+      callbackURL: "/auth/github/callback",
     },
     function (
       accessToken: any,
