@@ -172,6 +172,7 @@ passport.use(
   )
 );
 
+// SG 09/13/2022 18:30 only store user._id in session
 passport.serializeUser((user: IUser, done) => {
   return done(null, user._id);
 });
