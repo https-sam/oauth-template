@@ -5,7 +5,6 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import authRouters from "./routes/auth";
-import user from "./models/user";
 
 const app = express();
 const PORT = process.env.PORT || 8080;

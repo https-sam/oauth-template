@@ -18,38 +18,55 @@ interface USER_SERIALIZATION_RESPONSE {
 }
 
 // SG 09/13/2022 14:05 this function checks if the authenticated user exists in db
-const serializeUser = async (
+const serializeUser = (
   email: string,
   authProvider: string,
   providerId: string,
-  username: string
+  username: string,
+  name: string,
+  profileImage: string
 ): Promise<USER_SERIALIZATION_RESPONSE | Error> => {
   return new Promise((resolve, reject) => {
     User.findOne({ providerId: providerId }, async (err: Error, doc: IUser) => {
       if (err) reject(err);
+      const latestUserData = {
+        authProvider: authProvider,
+        providerId: providerId,
+        email: email,
+        username: username,
+        name: name,
+        profileImage: profileImage,
+      };
       if (!doc) {
         // insert this user into database
-        User.create(
-          {
-            authProvider: authProvider,
-            providerId: providerId,
-            email: email,
-            username: username,
-          },
-          async (err: Error, doc: any) => {
-            if (err) reject(err);
+        User.create(latestUserData, async (err: Error, doc: any) => {
+          if (err) reject(err);
+          resolve({
+            message: "registered",
+            data: doc,
+          });
+        });
+      } else {
+        // SG 09/13/2022 12:57 user exists, update the data in db
+        User.findOneAndUpdate(
+          { providerId: providerId },
+          latestUserData,
+          (err: Error, updatedDoc: IUser) => {
+            console.log(updatedDoc);
+            if (err) {
+              // SG 09/13/2022 17:55  error updating value, return old data
+              resolve({
+                message: "logged in",
+                data: doc,
+              });
+            }
+
             resolve({
-              message: "registered",
-              data: doc,
+              message: "logged in",
+              data: updatedDoc,
             });
           }
         );
-      } else {
-        // SG 09/13/2022 12:57  user exists
-        resolve({
-          message: "logged in",
-          data: doc,
-        });
       }
     });
   });
@@ -72,11 +89,12 @@ passport.use(
         profile.emails[0].value,
         "google",
         profile.id,
-        profile.displayName
+        profile.displayName,
+        `${profile.name.familyName} ${profile.name.givenName}`,
+        profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
-          console.log(res);
-          cb(null, profile);
+          cb(null, res.data);
         })
         .catch((e) => {
           console.log(e);
@@ -105,11 +123,12 @@ passport.use(
         profile.emails[0].value,
         "twitter",
         profile.id,
-        profile.displayName
+        profile.username,
+        profile.displayName,
+        profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
-          console.log(res);
-          cb(null, profile);
+          cb(null, res.data);
         })
         .catch((e) => {
           console.log(e);
@@ -137,11 +156,12 @@ passport.use(
         profile.emails[0].value,
         "github",
         profile.id,
-        profile.displayName
+        profile.username,
+        profile.displayName,
+        profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
-          console.log(res);
-          cb(null, profile);
+          cb(null, res.data);
         })
         .catch((e) => {
           console.log(e);
@@ -152,12 +172,14 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => {
-  return done(null, user);
+passport.serializeUser((user: IUser, done) => {
+  return done(null, user._id);
 });
 
-passport.deserializeUser((user, done) => {
-  return done(null, user);
+passport.deserializeUser((id: string, done) => {
+  User.findById(id, (err: Error, doc: IUser) => {
+    return done(null, doc);
+  });
 });
 
 /******** Setting up Routes & callback routes ********/
