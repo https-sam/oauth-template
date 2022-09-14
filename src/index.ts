@@ -1,6 +1,6 @@
+require("dotenv").config();
 import express from "express";
 import mongoose, { ConnectOptions } from "mongoose";
-import dotenv from "dotenv";
 import cors from "cors";
 import session from "express-session";
 import passport from "passport";
@@ -8,8 +8,6 @@ import authRouters from "./routes/auth";
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-
-dotenv.config();
 
 mongoose
   .connect(
@@ -31,10 +29,9 @@ app.use(
     saveUninitialized: true,
   })
 );
-app.use("/auth", authRouters);
-
 app.use(passport.initialize());
 app.use(passport.session());
+app.use("/auth", authRouters);
 
 app.get("/", (req, res) => {
   res.send("Root dir: success");
@@ -43,16 +40,6 @@ app.get("/", (req, res) => {
 // returns the logged in user's informaton obtained from the provider
 app.get("/get_user", (req, res) => {
   res.send(req.user);
-});
-
-// SG 09/14/2022 14:37 logs the user out of session
-app.get("/logout", (req, res) => {
-  if (req.user) {
-    req.logout((err) => {
-      if (err) res.send("failed");
-      res.send("success");
-    });
-  }
 });
 
 app.listen(PORT, () => {

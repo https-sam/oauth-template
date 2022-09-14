@@ -1,12 +1,10 @@
 import express from "express";
 import passport from "passport";
-import dotenv from "dotenv";
 import User from "../models/user";
 import { IUser } from "src/utils/types";
 import { Error } from "mongoose";
 
 const router = express.Router();
-dotenv.config();
 
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const TwitterStrategy = require("passport-twitter").Strategy;
@@ -227,11 +225,13 @@ router.get(
   }
 );
 
-router.post("/logout", (req, res) => {
-  console.log(req.user);
+// SG 09/14/2022 14:37 logs the user out of session
+router.get("/logout", (req, res) => {
   if (req.user) {
-    req.logout(null);
-    res.send("success");
+    req.logout((err) => {
+      if (err) res.send("failed");
+      res.send("success");
+    });
   }
 });
 
