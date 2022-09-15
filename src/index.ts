@@ -1,4 +1,5 @@
 require("dotenv").config();
+const config = require("../config.default");
 import express from "express";
 import mongoose, { ConnectOptions } from "mongoose";
 import cors from "cors";
@@ -7,24 +8,30 @@ import passport from "passport";
 import authRouters from "./routes/auth";
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || config.port;
 
-mongoose
-  .connect(
-    process.env.MONGO_URI as string,
-    { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions
-  )
-  .then(() => {
-    console.log("Connected to mongo db");
-  });
+const dbConnectRetry = () => {
+  mongoose
+    .connect(
+      config.mongoURL as string,
+      { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions
+    )
+    .then(() => {
+      console.log("Connected to mongo db");
+    })
+    .catch((e) => {
+      console.log(`Mongoose connection error: ${e}`);
+      setTimeout(dbConnectRetry, 5000);
+    });
+};
 
-// { useNewUrlParser: true, useUnifiedTopology: true } as ConnectOptions,
+dbConnectRetry();
 
 app.use(express.json());
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: config.frontendURL, credentials: true }));
 app.use(
   session({
-    secret: process.env.SESSION_SECRET_KEY,
+    secret: config.sessionSecret,
     resave: true,
     saveUninitialized: true,
   })

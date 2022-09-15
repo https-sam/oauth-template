@@ -1,3 +1,4 @@
+const config = require("../../config.default");
 import express from "express";
 import passport from "passport";
 import User from "../models/user";
@@ -50,7 +51,6 @@ const serializeUser = (
           { providerId: providerId },
           latestUserData,
           (err: Error, updatedDoc: IUser) => {
-            console.log(updatedDoc);
             if (err) {
               // SG 09/13/2022 17:55  error updating value, return old data
               resolve({
@@ -73,8 +73,8 @@ const serializeUser = (
 passport.use(
   new GoogleStrategy(
     {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientID: config.googlePassport.client,
+      clientSecret: config.googlePassport.secret,
       callbackURL: "/auth/google/callback",
     },
     async function (
@@ -106,8 +106,8 @@ passport.use(
 passport.use(
   new TwitterStrategy(
     {
-      consumerKey: process.env.TWITTER_CONSUMER_KEY,
-      consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
+      consumerKey: config.twitterPassport.consumer,
+      consumerSecret: config.twitterPassport.secret,
       includeEmail: true,
       callbackURL: "/auth/twitter/callback",
     },
@@ -140,8 +140,8 @@ passport.use(
 passport.use(
   new GitHubStrategy(
     {
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      clientID: config.githubPassport.client,
+      clientSecret: config.githubPassport.secret,
       callbackURL: "/auth/github/callback",
     },
     function (
@@ -194,7 +194,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(config.frontendURL);
   }
 );
 
@@ -206,7 +206,7 @@ router.get(
   passport.authenticate("twitter", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(config.frontendURL);
   }
 );
 
@@ -221,7 +221,7 @@ router.get(
   passport.authenticate("github", { failureRedirect: "/login" }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect(config.frontendURL);
   }
 );
 
