@@ -46,25 +46,29 @@ const serializeUser = (
           });
         });
       } else {
+        resolve({
+          message: "logged in",
+          data: doc,
+        });
         // SG 09/13/2022 12:57 user exists, update the data in db
-        User.findOneAndUpdate(
-          { providerId: providerId },
-          latestUserData,
-          (err: Error, updatedDoc: IUser) => {
-            if (err) {
-              // SG 09/13/2022 17:55  error updating value, return old data
-              resolve({
-                message: "logged in",
-                data: doc,
-              });
-            }
-            // SG 09/13/2022 18:46  return updated data
-            resolve({
-              message: "logged in",
-              data: updatedDoc,
-            });
-          }
-        );
+        // User.findOneAndUpdate(
+        //   { providerId: providerId },
+        //   latestUserData,
+        //   (err: Error, updatedDoc: IUser) => {
+        //     if (err) {
+        //       // SG 09/13/2022 17:55  error updating value, return old data
+        //       resolve({
+        //         message: "logged in",
+        //         data: doc,
+        //       });
+        //     }
+        //     // SG 09/13/2022 18:46  return updated data
+        //     resolve({
+        //       message: "logged in",
+        //       data: updatedDoc,
+        //     });
+        //   }
+        // );
       }
     });
   });
