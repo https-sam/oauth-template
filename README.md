@@ -1,4 +1,4 @@
-# oauth-template-jwt
+# oauth-template
 
 An authentication backend server template 
 - Twitter
