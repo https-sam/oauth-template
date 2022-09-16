@@ -46,6 +46,7 @@ const serializeUser = (
           });
         });
       } else {
+        // SG 09/15/2022 23:08 passing the response from db
         resolve({
           message: "logged in",
           data: doc,
