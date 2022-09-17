@@ -16,7 +16,8 @@ interface USER_SERIALIZATION_RESPONSE {
   data: IUser;
 }
 
-// SG 09/13/2022 14:05 this function checks if the authenticated user exists in db
+// SG 09/13/2022 14:05
+// if user doesnt exist, initialize user in db otheriwise, return exisitng data
 const serializeUser = (
   email: string,
   authProvider: string,
@@ -97,7 +98,7 @@ passport.use(
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
-          cb(null, res.data);
+          cb(null, res);
         })
         .catch((e) => {
           console.log(e);
@@ -131,7 +132,7 @@ passport.use(
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
-          cb(null, res.data);
+          cb(null, res);
         })
         .catch((e) => {
           console.log(e);
@@ -164,7 +165,7 @@ passport.use(
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
-          cb(null, res.data);
+          cb(null, res);
         })
         .catch((e) => {
           console.log(e);
@@ -176,8 +177,8 @@ passport.use(
 );
 
 // SG 09/13/2022 18:30 only store user._id in session
-passport.serializeUser((user: IUser, done) => {
-  return done(null, user._id);
+passport.serializeUser((user: USER_SERIALIZATION_RESPONSE, done) => {
+  return done(null, user.data._id);
 });
 
 passport.deserializeUser((id: string, done) => {
@@ -194,13 +195,22 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+// SG 09/16/2022 22:42, can ONLY be used for auth callback endpoints
+// redirect user to home page if user has already created an account
+// redirect user to registraion page if user has just signed up
+const resirectUser = (req: any, res: any) => {
+  const authStatus = req.user.message || "";
+  if (authStatus && authStatus === "registered") {
+    res.redirect(`${config.frontendURL}/register`);
+  } else {
+    res.redirect(config.frontendURL);
+  }
+};
+
 router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect(config.frontendURL);
-  }
+  (req, res) => resirectUser(req, res)
 );
 
 // SG 09/13/2022 02:10  twitter route
@@ -209,10 +219,7 @@ router.get("/twitter", passport.authenticate("twitter"));
 router.get(
   "/twitter/callback",
   passport.authenticate("twitter", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect(config.frontendURL);
-  }
+  (req, res) => resirectUser(req, res)
 );
 
 // SG 09/13/2022 02:10  Github route
@@ -224,10 +231,7 @@ router.get(
 router.get(
   "/github/callback",
   passport.authenticate("github", { failureRedirect: "/login" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect(config.frontendURL);
-  }
+  (req, res) => resirectUser(req, res)
 );
 
 // SG 09/14/2022 14:37 logs the user out of session

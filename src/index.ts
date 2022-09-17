@@ -42,7 +42,7 @@ app.use(passport.session());
 app.use("/auth", authRouters);
 
 app.get("/", (req, res) => {
-  res.send("Root dir: success");
+  res.send("Success");
 });
 
 // returns the logged in user's informaton obtained from the provider
