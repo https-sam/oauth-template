@@ -23,7 +23,8 @@ const serializeUser = (
   authProvider: string,
   providerId: string,
   username: string,
-  name: string,
+  firstName: string,
+  lastName: string,
   profileImage: string
 ): Promise<USER_SERIALIZATION_RESPONSE | Error> => {
   return new Promise((resolve, reject) => {
@@ -34,7 +35,8 @@ const serializeUser = (
         providerId: providerId,
         email: email,
         username: username,
-        name: name,
+        firstName: firstName,
+        lastName: lastName,
         profileImage: profileImage,
       };
       if (!doc) {
@@ -94,7 +96,8 @@ passport.use(
         "google",
         profile.id,
         profile.displayName,
-        `${profile.name.givenName} ${profile.name.familyName}`,
+        profile.name.givenName,
+        profile.name.familyName,
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
@@ -128,7 +131,8 @@ passport.use(
         "twitter",
         profile.id,
         profile.username,
-        profile.displayName,
+        profile.displayName.split(" ")[0],
+        profile.displayName.split(" ")[1],
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
@@ -161,7 +165,8 @@ passport.use(
         "github",
         profile.id,
         profile.username,
-        profile.displayName,
+        profile.displayName.split(" ")[0],
+        profile.displayName.split(" ")[1],
         profile.photos[0].value
       )
         .then((res: USER_SERIALIZATION_RESPONSE) => {
