@@ -6,5 +6,6 @@ An authentication backend server template that features 3 passport strategies
 - Google
 
 
-# DB
+# DB (to store user info)
 - Mongo DB
+
